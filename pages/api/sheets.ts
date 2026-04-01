@@ -4,11 +4,14 @@ import path from 'path'
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!
 
+if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+  throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON environment variable is not set')
+}
+
+const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON)
+
 const auth = new google.auth.GoogleAuth({
-  credentials: process.env.GOOGLE_SERVICE_ACCOUNT_JSON
-    ? JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON)
-    : undefined,
-  keyFile: process.env.GOOGLE_SERVICE_ACCOUNT_JSON ? undefined : './google-credentials.json',
+  credentials,
   scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
 })
 
