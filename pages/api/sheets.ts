@@ -4,8 +4,12 @@ import path from 'path'
 
 const SHEET_ID = process.env.GOOGLE_SHEET_ID!
 
+const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_JSON
+  ? JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON)
+  : require('../../google-credentials.json')
+
 const auth = new google.auth.GoogleAuth({
-  keyFile: './google-credentials.json',
+  credentials,
   scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
 })
 
