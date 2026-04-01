@@ -336,6 +336,9 @@ function AccountCard({ account, onGenerateInsights, insights, generatingInsights
 }
 
 export default function Dashboard() {
+  const [unlocked, setUnlocked] = useState(false)
+  const [pw, setPw] = useState('')
+  const [pwError, setPwError] = useState(false)
   const [view, setView] = useState<View>('all')
   const [dateFilter, setDateFilter] = useState<DateFilter>('all')
   const [data, setData] = useState<any[]>([])
@@ -431,7 +434,40 @@ export default function Dashboard() {
             </a>
           </div>
 
-          {loading ? (
+          {!unlocked ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '120px 0', gap: 16 }}>
+              <div style={{ fontSize: 16, fontWeight: 500, color: DARK, marginBottom: 8 }}>Enter password</div>
+              <input
+                type="password"
+                value={pw}
+                onChange={e => { setPw(e.target.value); setPwError(false) }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    if (pw === process.env.NEXT_PUBLIC_DASHBOARD_PASSWORD || pw === 'thefirstthree') {
+                      setUnlocked(true)
+                    } else {
+                      setPwError(true)
+                    }
+                  }
+                }}
+                placeholder="Password"
+                style={{ padding: '10px 16px', borderRadius: 10, border: `0.5px solid ${pwError ? '#e24b4a' : BORDER}`, fontSize: 14, fontFamily: 'inherit', width: 240, outline: 'none' }}
+              />
+              {pwError && <div style={{ fontSize: 12, color: '#e24b4a' }}>Incorrect password</div>}
+              <button
+                onClick={() => {
+                  if (pw === process.env.NEXT_PUBLIC_DASHBOARD_PASSWORD || pw === 'thefirstthree') {
+                    setUnlocked(true)
+                  } else {
+                    setPwError(true)
+                  }
+                }}
+                style={{ background: DARK, color: WARM_BG, border: 'none', borderRadius: 20, padding: '8px 24px', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
+              >
+                Enter
+              </button>
+            </div>
+          ) : loading ? (
             <div style={{ textAlign: 'center', padding: '80px 0', color: MUTED, fontSize: 13 }}>Loading from Google Sheets...</div>
           ) : filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px 0', color: MUTED, fontSize: 13 }}>No accounts found</div>
